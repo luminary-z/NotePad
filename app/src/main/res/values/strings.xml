@@ -4,4 +4,7 @@
     <string name="enter">点击进入</string>
     <string name="note">记事本</string>
     <string name="add">新增记事</string>
+    <string name="input">请输入内容</string>
+    <string name="save">保存</string>
+    <string name="nodata">No Data</string>
 </resources>

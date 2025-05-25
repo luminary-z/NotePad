@@ -16,10 +16,31 @@
         android:textColor="@color/white"
         android:gravity="center"
         android:textSize="36sp" />
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="700dp"
+        android:text="@string/nodata"/>
     <Button
+        android:id="@+id/add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add"
-        android:layout_marginTop="750dp"/>
+        android:layout_margin="16dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+
 
 </LinearLayout>
