@@ -31,6 +31,10 @@ public class EditActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 设置进入动画
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        setContentView(R.layout.activity_edit);
+
         setContentView(R.layout.activity_edit);
         editText = findViewById(R.id.editText);
         saveButton = findViewById(R.id.saveButton);
@@ -55,6 +59,11 @@ public class EditActivity extends Activity {
        saveButton.setOnClickListener(v -> saveAndReturn());
     }
 
+    public void finish() {
+        super.finish();
+        // 设置退出动画
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
     private void saveAndReturn() {
         String content = editText.getText().toString();
         String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())

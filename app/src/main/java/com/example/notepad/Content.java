@@ -38,12 +38,15 @@ public class Content extends ListActivity {
     private static final String NOTES_KEY = "notes";
     private ArrayList<HashMap<String, String>> listItems;
     private SimpleAdapter listItemAdapter;
+    private ProgressBar progressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        progressBar = findViewById(R.id.progressBar); // 获取ProgressBar
 
         // 初始化时加载保存的数据
         listItems = loadNotes();
@@ -56,19 +59,30 @@ public class Content extends ListActivity {
 
         Button addButton = findViewById(R.id.add);
         addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Content.this, EditActivity.class);
-            startActivityForResult(intent, EDIT_REQUEST_CODE);
+            showProgressBar();
+            // 使用postDelayed模拟加载延迟（实际项目中可以替换为真实操作）
+            new android.os.Handler().postDelayed(() -> {
+                Intent intent = new Intent(Content.this, EditActivity.class);
+                startActivityForResult(intent, EDIT_REQUEST_CODE);
+                hideProgressBar();
+            }, 500); // 0.5秒延迟
         });
 
         // 设置列表项点击监听（用于编辑）
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            HashMap<String, String> selectedItem = listItems.get(position);
-            Intent intent = new Intent(Content.this, EditActivity.class);
-            intent.putExtra("content", selectedItem.get("ItemTitle"));
-            intent.putExtra("time", selectedItem.get("Time"));
-            intent.putExtra("position", position); // 传递位置用于更新
-            startActivityForResult(intent, EDIT_REQUEST_CODE);
+            showProgressBar();
+            // 使用postDelayed模拟加载延迟
+            new android.os.Handler().postDelayed(() -> {
+                HashMap<String, String> selectedItem = listItems.get(position);
+                Intent intent = new Intent(Content.this, EditActivity.class);
+                intent.putExtra("content", selectedItem.get("ItemTitle"));
+                intent.putExtra("time", selectedItem.get("Time"));
+                intent.putExtra("position", position);
+                startActivityForResult(intent, EDIT_REQUEST_CODE);
+                hideProgressBar();
+            }, 500); // 0.5秒延迟
         });
+
 
         // 设置列表项长按监听（用于删除）
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
@@ -85,7 +99,16 @@ public class Content extends ListActivity {
             return true; // 消费长按事件
         });
 
-}
+    }
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        getListView().setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        getListView().setVisibility(View.VISIBLE);
+    }
 
     // 保存笔记到SharedPreferences
     private void saveNotes() {
@@ -93,19 +116,19 @@ public class Content extends ListActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         try{
-           JSONArray jsonArray = new JSONArray();
-           for (HashMap<String, String> note : listItems) {
-               JSONObject jsonObject = new JSONObject();
-               jsonObject.put("title", note.get("ItemTitle"));
-               jsonObject.put("time", note.get("Time"));
-               jsonArray.put(jsonObject);
-           }
+            JSONArray jsonArray = new JSONArray();
+            for (HashMap<String, String> note : listItems) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", note.get("ItemTitle"));
+                jsonObject.put("time", note.get("Time"));
+                jsonArray.put(jsonObject);
+            }
             editor.putString(NOTES_KEY, jsonArray.toString());
             editor.apply();
-            } catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e("SaveNotes", "Error saving notes", e);
-            }
         }
+    }
 
 
     // 从SharedPreferences加载笔记

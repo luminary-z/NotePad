@@ -34,6 +34,13 @@
         android:layout_height="wrap_content"
         android:text="@string/add"
         android:layout_margin="16dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 
 
