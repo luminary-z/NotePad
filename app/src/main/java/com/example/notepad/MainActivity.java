@@ -16,15 +16,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         Button enter = findViewById(R.id.enter);
-        enter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,Content.class);
-                startActivity(intent);
-            }
+        enter.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Content.class);
+            startActivity(intent);
         });
 
     }

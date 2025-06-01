@@ -14,7 +14,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         android:maxLines="1"
-        tools:text="这是一个很长很长很长很长很长很长的标题..."/>
+        tools:text="这是一个很长的标题..."/>
 
     <TextView
         android:id="@+id/time"
