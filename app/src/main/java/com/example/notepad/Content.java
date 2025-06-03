@@ -33,11 +33,11 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Content extends ListActivity {
-    private static final int EDIT_REQUEST_CODE = 1;
+    private static final int EDIT_REQUEST_CODE = 1; // 编辑请求码
     private static final String PREFS_NAME = "NotePrefs";
     private static final String NOTES_KEY = "notes";
-    private ArrayList<HashMap<String, String>> listItems;
-    private SimpleAdapter listItemAdapter;
+    private ArrayList<HashMap<String, String>> listItems; // 存储笔记数据
+    private SimpleAdapter listItemAdapter; // 列表适配器
     private ProgressBar progressBar;
 
 
@@ -51,30 +51,34 @@ public class Content extends ListActivity {
         // 初始化时加载保存的数据
         listItems = loadNotes();
 
+        // 设置列表为空时显示的视图
         ListView listView = getListView();
         View emptyView = findViewById(android.R.id.empty);
         listView.setEmptyView(emptyView);
 
+        // 初始化列表视图
         initListView();
 
+        // 添加按钮点击事件
         Button addButton = findViewById(R.id.add);
         addButton.setOnClickListener(v -> {
-            showProgressBar();
-            // 使用postDelayed模拟加载延迟（实际项目中可以替换为真实操作）
+            showProgressBar();// 显示加载进度条
+            // 使用延迟模拟加载过程
             new android.os.Handler().postDelayed(() -> {
                 Intent intent = new Intent(Content.this, EditActivity.class);
                 startActivityForResult(intent, EDIT_REQUEST_CODE);
-                hideProgressBar();
+                hideProgressBar();// 隐藏进度条
             }, 500); // 0.5秒延迟
         });
 
-        // 设置列表项点击监听（用于编辑）
+        // 列表项点击监听事件（点击列表进入编辑笔记）
         listView.setOnItemClickListener((parent, view, position, id) -> {
             showProgressBar();
-            // 使用postDelayed模拟加载延迟
             new android.os.Handler().postDelayed(() -> {
+                // 获取选中的笔记数据
                 HashMap<String, String> selectedItem = listItems.get(position);
                 Intent intent = new Intent(Content.this, EditActivity.class);
+                // 传递笔记内容、时间和位置
                 intent.putExtra("content", selectedItem.get("ItemTitle"));
                 intent.putExtra("time", selectedItem.get("Time"));
                 intent.putExtra("position", position);
@@ -84,38 +88,69 @@ public class Content extends ListActivity {
         });
 
 
-        // 设置列表项长按监听（用于删除）
+        // 列表项长按监听（用于删除笔记）
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            // 显示确认删除对话框
             new AlertDialog.Builder(Content.this)
                     .setTitle("删除笔记")
                     .setMessage("确定要删除这条笔记吗？")
                     .setPositiveButton("确定", (dialog, which) -> {
-                        listItems.remove(position);
-                        saveNotes(); // 删除后立即保存
-                        listItemAdapter.notifyDataSetChanged();
+                        listItems.remove(position);// 从列表中移除
+                        saveNotes(); // 删除后立即保存更改
+                        listItemAdapter.notifyDataSetChanged();// 更新列表
                     })
                     .setNegativeButton("取消", null)
                     .show();
-            return true; // 消费长按事件
+            return true;
         });
 
     }
+
+    // 初始化列表视图
+    private void initListView() {
+        // 创建SimpleAdapter适配器
+        listItemAdapter = new SimpleAdapter(this, listItems, R.layout.list_item,
+                new String[]{"ItemTitle", "Time"},
+                new int[]{R.id.itemTitle, R.id.time}) {
+
+            // 重写setViewText处理文本显示
+            @Override
+            public void setViewText(TextView v, String text) {
+                if (v.getId() == R.id.itemTitle) {
+                    // 标题处理：确保单行显示，超长省略
+                    v.setSingleLine(true);
+                    v.setEllipsize(TextUtils.TruncateAt.END);
+                }
+                super.setViewText(v, text);
+            }
+        };
+
+        setListAdapter(listItemAdapter);// 设置列表适配器，将适配器绑定到ListView
+        getListView().setDividerHeight(1);  // 设置列表项分割线高度
+    }
+
+    // 进度条控制
+
+    // 显示进度条
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
         getListView().setVisibility(View.GONE);
     }
 
+    // 隐藏进度条
     private void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
         getListView().setVisibility(View.VISIBLE);
     }
 
-    // 保存笔记到SharedPreferences
+
+    // 使用SharedPreferences持久化存储笔记数据
     private void saveNotes() {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
         try{
+            // 将笔记列表转换为JSON格式保存
             JSONArray jsonArray = new JSONArray();
             for (HashMap<String, String> note : listItems) {
                 JSONObject jsonObject = new JSONObject();
@@ -124,12 +159,11 @@ public class Content extends ListActivity {
                 jsonArray.put(jsonObject);
             }
             editor.putString(NOTES_KEY, jsonArray.toString());
-            editor.apply();
+            editor.apply();// 异步提交保存
         } catch (JSONException e) {
             Log.e("SaveNotes", "Error saving notes", e);
         }
     }
-
 
     // 从SharedPreferences加载笔记
     private ArrayList<HashMap<String, String>> loadNotes() {
@@ -138,6 +172,7 @@ public class Content extends ListActivity {
         ArrayList<HashMap<String, String>> notes = new ArrayList<>();
 
         try {
+            // 解析JSON数据
             JSONArray jsonArray = new JSONArray(jsonString);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -152,18 +187,14 @@ public class Content extends ListActivity {
         return notes;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveNotes(); // 在Activity失去焦点时保存
-    }
 
-
+    // 处理编辑活动返回的结果
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Content.EDIT_REQUEST_CODE && resultCode == RESULT_OK) {
+            // 获取返回的数据
             String content = data.getStringExtra("content");
             String time = data.getStringExtra("time");
             int position = data.getIntExtra("position", -1);
@@ -179,31 +210,16 @@ public class Content extends ListActivity {
                 // 更新现有项目
                 listItems.set(position, map);
             }
-            listItemAdapter.notifyDataSetChanged();
+            listItemAdapter.notifyDataSetChanged();// 更新列表显示
         }
     }
 
-    private void initListView() {
-        //listItems = new ArrayList<>();
-        listItemAdapter = new SimpleAdapter(this, listItems, R.layout.list_item,
-                new String[]{"ItemTitle", "Time"},
-                new int[]{R.id.itemTitle, R.id.time}) {
-
-            // 重写setViewText处理文本显示
-            @Override
-            public void setViewText(TextView v, String text) {
-                if (v.getId() == R.id.itemTitle) {
-                    // 标题处理：确保单行显示
-                    v.setSingleLine(true);
-                    v.setEllipsize(TextUtils.TruncateAt.END);
-                }
-                super.setViewText(v, text);
-            }
-        };
-
-        setListAdapter(listItemAdapter);
-        // 设置列表项固定高度
-        getListView().setDividerHeight(1);  // 设置分割线高度
+    // 生命周期管理，确保数据不丢失
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveNotes(); // 在Activity失去焦点时保存
     }
+
 }
 

@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
 
+    <!-- 笔记标题（单行显示，超长省略） -->
     <TextView
         android:id="@+id/itemTitle"
         android:layout_width="match_parent"
@@ -16,6 +17,7 @@
         android:maxLines="1"
         tools:text="这是一个很长的标题..."/>
 
+    <!-- 时间戳（右对齐灰色小字） -->
     <TextView
         android:id="@+id/time"
         android:layout_width="match_parent"

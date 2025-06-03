@@ -24,8 +24,8 @@ import java.util.Locale;
 public class EditActivity extends Activity {
     private EditText editText;
     private Button saveButton;
-    private boolean hasUnsavedChanges = false;
-    private String originalContent = "";
+    private boolean hasUnsavedChanges = false; // 未保存更改标志
+    private String originalContent = ""; // 原始内容
 
 
     @Override
@@ -51,11 +51,13 @@ public class EditActivity extends Activity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 检测内容变更，设置未保存标志
                 hasUnsavedChanges = !s.toString().equals(originalContent);
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        // 保存按钮事件
        saveButton.setOnClickListener(v -> saveAndReturn());
     }
 
@@ -64,11 +66,14 @@ public class EditActivity extends Activity {
         // 设置退出动画
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
+    // 保存并返回
     private void saveAndReturn() {
         String content = editText.getText().toString();
+        // 获取当前时间作为时间戳
         String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                 .format(new Date());
 
+        // 返回数据给Content
         Intent resultIntent = new Intent();
         resultIntent.putExtra("content", content);
         resultIntent.putExtra("time", currentTime);
@@ -77,6 +82,7 @@ public class EditActivity extends Activity {
         finish();
     }
 
+    // 显示未保存更改对话框
     private void showUnsavedChangesDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("未保存的更改")
@@ -97,19 +103,19 @@ public class EditActivity extends Activity {
                 .show();
     }
 
+    // 不保存直接返回
     private void finishWithoutSaving() {
         setResult(RESULT_CANCELED);
         finish();
     }
+    // 返回键处理
     public void onBackPressed() {
+        // 未保存更改提示
         if (hasUnsavedChanges) {
-            showUnsavedChangesDialog();
+            showUnsavedChangesDialog();// 三按钮对话框（保存/不保存/取消）
         } else {
             super.onBackPressed();
         }
     }
 
-//    public void onBackPressed() {
-//        saveAndReturn(); // 拦截返回键执行保存
-//    }
 }

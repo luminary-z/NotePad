@@ -17,8 +17,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // 获取进入按钮并设置点击事件
         Button enter = findViewById(R.id.enter);
         enter.setOnClickListener(v -> {
+            // 跳转到内容列表界面(Content)
             Intent intent = new Intent(MainActivity.this, Content.class);
             startActivity(intent);
         });
