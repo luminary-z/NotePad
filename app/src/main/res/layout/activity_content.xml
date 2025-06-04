@@ -11,7 +11,7 @@
     <!-- 标题栏 -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70sp"
         android:text="@string/note"
         android:background="#3598DB"
         android:textColor="@color/white"
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="700dp"
+        android:layout_marginBottom="36sp"
         android:text="@string/nodata"/>
     <!-- 添加按钮 -->
     <Button
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add"
-        android:layout_margin="16dp" />
+       android:layout_marginBottom="15sp"/>
     <!-- 加载进度条 -->
     <ProgressBar
         android:id="@+id/progressBar"
