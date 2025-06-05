@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="56dp"
+    android:paddingBottom="1dp">
+    <!-- 为分隔线预留空间 -->
 
     <!-- 笔记标题（单行显示，超长省略） -->
     <TextView
@@ -11,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:textSize="16sp"
+        android:textSize="24sp"
         android:singleLine="true"
         android:ellipsize="end"
         android:maxLines="1"
